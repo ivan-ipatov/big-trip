@@ -17,21 +17,24 @@ const siteContainerElement = siteMainElement.querySelector(
 
 export default class TripPlannerPresenter {
   listComponent = new StartingPointListView();
-  constructor({ TripPlannerContainer }) {
+  constructor({ TripPlannerContainer, pointModel }) {
     this.TripPlannerContainer = TripPlannerContainer;
+    this.pointModel = pointModel;
   }
 
   init() {
+    this.points = [...this.pointModel.getPoints()];
+
     render(new TripInfoView(), tripMain, RenderPosition.AFTERBEGIN);
     render(new FilterView(), tripMain, RenderPosition.BEFOREEND);
     render(new SortingView(), this.TripPlannerContainer);
     render(this.listComponent, this.TripPlannerContainer);
-
-    render(new EditingFormView(), this.listComponent.getElement());
+    render(new EditingFormView({ point: this.points[0] }), this.listComponent.getElement());
     render(new CreationFormView(), this.listComponent.getElement());
-    for (let i = 0; i < 3; i++) {
-      render(new StartingPointView(), this.listComponent.getElement());
-    }
+    this.points.forEach((point) => {
+      render(new StartingPointView({ point: point }), this.listComponent.getElement());
+    });
+
   }
 }
 
