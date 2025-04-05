@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizePointDate, getDateDifference } from '../utils/date.js';
 import { getDestinationById, getOffersByType } from '../utils/mock.js';
 
@@ -12,16 +12,13 @@ function createWaypointTemplate(point) {
 
   const offers = getOffersByType(point);
 
-  const selectedOffers = offers
-    .filter((offer) => point.offers.includes(offer.id))
-    .map((offer) => `
+  const selectedOffers = offers.filter((offer) => point.offers.includes(offer.id)).map((offer) => `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>
-    `)
-    .join('');
+    `).join('');
   const isFavoriteEvt = isFavorite ? 'event__favorite-btn--active' : '';
   return ` <li class="trip-events__item">
               <div class="event">
@@ -58,24 +55,23 @@ function createWaypointTemplate(point) {
             </li>`;
 }
 
-export default class StartingPoint {
-  constructor({ point }) {
-    this.point = point;
+export default class StartingPoint extends AbstractView {
+  #point = null;
+  #handleEditClick = null;
+  constructor({ point, onButtonClick }) {
+    super();
+    this.#point = point;
+    this.#handleEditClick = onButtonClick;
 
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
   }
 
-  getTemplate() {
-    return createWaypointTemplate(this.point);
+  get template() {
+    return createWaypointTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #buttonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

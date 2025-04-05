@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
 import { humanizeEditingFormDate } from '../utils/date.js';
 import { getDestinationById, getOffersByType } from '../utils/mock.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createEditingFormTemplate(point) {
   const { type, price, startDate, endDate } = point;
@@ -138,23 +138,31 @@ function createEditingFormTemplate(point) {
 `;
 }
 
-export default class EditingFormView {
-  constructor({ point }) {
-    this.point = point;
+export default class EditingFormView extends AbstractView {
+  #point = null;
+  #handleFormSubmit = null;
+  #handleEditClick = null;
+  constructor({ point, onFormSubmit, onButtonClick }) {
+    super();
+    this.#point = point;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleEditClick = onButtonClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  getTemplate() {
-    return createEditingFormTemplate(this.point);
+  get template() {
+    return createEditingFormTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-  removeElement() {
-    this.element = null;
-  }
+  #buttonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
