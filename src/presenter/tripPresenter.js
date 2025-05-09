@@ -36,7 +36,6 @@ export default class TripPlannerPresenter {
     this.#renderTrip();
   }
 
-
   #renderCreationForm() {
     render(this.#creationForm, this.#listComponent.element);
   }
