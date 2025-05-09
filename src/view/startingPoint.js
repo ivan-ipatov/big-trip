@@ -73,7 +73,6 @@ export default class StartingPoint extends AbstractView {
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
-
   }
 
   get template() {
@@ -88,7 +87,6 @@ export default class StartingPoint extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleFavouriteToggle();
-
   };
 
 }
