@@ -23,7 +23,7 @@ function createEditingFormTemplate(point) {
     })
     .join('');
   return `
-            <li class="trip-events__item">
+ <li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
@@ -142,13 +142,15 @@ export default class EditingFormView extends AbstractView {
   #point = null;
   #handleFormSubmit = null;
   #handleEditClick = null;
-  constructor({ point, onFormSubmit, onButtonClick }) {
+  #handleHideForm = null;
+  constructor({ point, onFormSubmit, onButtonClick, onFormHide }) {
     super();
     this.#point = point;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditClick = onButtonClick;
+    this.#handleHideForm = onFormHide;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#resetButtonClick);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
@@ -158,11 +160,11 @@ export default class EditingFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
-  #buttonClickHandler = (evt) => {
+  #resetButtonClick = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick();
+    this.#handleHideForm();
   };
 }

@@ -12,13 +12,16 @@ function createWaypointTemplate(point) {
 
   const offers = getOffersByType(point);
 
-  const selectedOffers = offers.filter((offer) => point.offers.includes(offer.id)).map((offer) => `
+  const selectedOffers = offers
+    .filter((offer) => point.offers.includes(offer.id))
+    .map((offer) => `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>
-    `).join('');
+    `)
+    .join('');
   const isFavoriteEvt = isFavorite ? 'event__favorite-btn--active' : '';
   return ` <li class="trip-events__item">
               <div class="event">
@@ -58,12 +61,19 @@ function createWaypointTemplate(point) {
 export default class StartingPoint extends AbstractView {
   #point = null;
   #handleEditClick = null;
-  constructor({ point, onButtonClick }) {
+
+  #handleFavouriteToggle = null;
+
+  constructor({ point, onButtonClick, onFavoriteClick }) {
     super();
     this.#point = point;
     this.#handleEditClick = onButtonClick;
 
+    this.#handleFavouriteToggle = onFavoriteClick;
+
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+
   }
 
   get template() {
@@ -74,4 +84,11 @@ export default class StartingPoint extends AbstractView {
     evt.preventDefault();
     this.#handleEditClick();
   };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavouriteToggle();
+
+  };
+
 }

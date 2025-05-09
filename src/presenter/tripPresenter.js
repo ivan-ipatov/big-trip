@@ -1,12 +1,12 @@
 import { RenderPosition } from '../render.js';
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import CreationFormView from '../view/formCreate.js';
 import SortingView from '../view/sort.js';
 import FilterView from '../view/filter.js';
-import EditingFormView from '../view/formEdit.js';
-import StartingPointView from '../view/startingPoint.js';
-import StartingPointListView from '../view/startPointList.js';
+import StartPointListView from '../view/startPointList.js';
 import TripInfoView from '../view/tripInfo.js';
+import PointPresenter from './point-presenter.js';
+import { updatePointData } from '../utils/dataBind.js';
 
 const header = document.querySelector('.page-header');
 const tripMain = header.querySelector('.trip-main');
@@ -18,61 +18,74 @@ const siteContainerElement = siteMainElement.querySelector(
 export default class TripPlannerPresenter {
   #TripPlannerContainer = null;
   #pointModel = null;
-
+  #sortComponent = new SortingView();
+  #tripInfoView = new TripInfoView();
+  #filterView = new FilterView();
+  #creationForm = new CreationFormView();
+  #pointPresenters = new Map();
+  #points = [];
   constructor({ TripPlannerContainer, pointModel }) {
     this.#TripPlannerContainer = TripPlannerContainer;
     this.#pointModel = pointModel;
   }
 
-  #listComponent = new StartingPointListView();
+  #listComponent = new StartPointListView();
 
   init() {
-    this.points = [...this.#pointModel.points];
+    this.#points = [...this.#pointModel.points];
+    this.#renderTrip();
+  }
 
-    render(new TripInfoView(), tripMain, RenderPosition.AFTERBEGIN);
-    render(new FilterView(), tripMain, RenderPosition.BEFOREEND);
-    render(new SortingView(), this.#TripPlannerContainer);
+
+  #renderCreationForm() {
+    render(this.#creationForm, this.#listComponent.element);
+  }
+
+  #renderWaypointList() {
     render(this.#listComponent, this.#TripPlannerContainer);
-    render(new CreationFormView(), this.#listComponent.element);
-    this.points.forEach((point) => {
-      this.#renderPoint(point);
-    });
+  }
 
+  #renderSort() {
+    render(this.#sortComponent, this.#TripPlannerContainer);
+  }
+
+  #renderTripInfo() {
+    render(this.#tripInfoView, tripMain, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderFilter() {
+    render(this.#filterView, tripMain, RenderPosition.BEFOREEND);
   }
 
   #renderPoint(point) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const pointComponent = new StartingPointView({
-      point, onButtonClick: () => {
-        replaceCardToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const pointPresenter = new PointPresenter({
+      listComponent: this.#listComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
-    const pointEditComponent = new EditingFormView({
-      point,
-      onFormSubmit: () => {
-        replaceFormToCard();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }, onButtonClick: () => {
-        replaceFormToCard();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-    });
-    function replaceCardToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-    function replaceFormToCard() {
-      replace(pointComponent, pointEditComponent);
-    }
-    render(pointComponent, this.#listComponent.element);
+    pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updatePointData(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #renderTrip() {
+    this.#renderTripInfo();
+    this.#renderSort();
+    this.#renderFilter();
+    this.#renderWaypointList();
+    this.#renderCreationForm();
+    this.#points.forEach((point) => {
+      this.#renderPoint(point);
+    });
+  }
 }
 
 export { TripPlannerPresenter, siteContainerElement };
