@@ -128,6 +128,71 @@ const mockOffers = [
         'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
       }
     ]
+  },
+  {
+    'type': 'bus',
+    'offers': [
+      {
+        'id': 1,
+        'title': 'Sleeping seats',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+      {
+        'id': 2,
+        'title': 'Movie selection',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+    ]
+  },
+  {
+    'type': 'train',
+    'offers': [
+      {
+        'id': 1,
+        'title': 'Premium carriage',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+      {
+        'id': 2,
+        'title': 'Personal service',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+      {
+        'id': 3,
+        'title': 'Single compartment',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      }
+    ]
+  },
+  {
+    'type': 'ship',
+    'offers': [
+      {
+        'id': 1,
+        'title': 'Excursions on board',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+      {
+        'id': 2,
+        'title': 'Access to exclusive areas',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      }
+    ]
+  },
+  {
+    'type': 'restaurant',
+    'offers': [
+      {
+        'id': 1,
+        'title': 'Holiday menus',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+      {
+        'id': 2,
+        'title': 'Private room',
+        'price': getRandomInt(PRICE.MIN, PRICE.MAX / 20),
+      },
+    ]
   }
 ];
 

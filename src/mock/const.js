@@ -52,4 +52,14 @@ const MINUTES = {
   MIN: 0,
   MAX: 59
 };
-export { PRICE, CITIES, HOUR, MINUTES };
+const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+const FLATPICKR_CONFIG = {
+  dateFormat: 'd/m/y H:i',
+  enableTime: true,
+  locale: {
+    firstDayOfWeek: 1,
+  },
+  'time_24hr': true,
+};
+export { PRICE, CITIES, HOUR, MINUTES, POINT_TYPES, FLATPICKR_CONFIG};
