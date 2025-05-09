@@ -62,4 +62,20 @@ const FLATPICKR_CONFIG = {
   },
   'time_24hr': true,
 };
-export { PRICE, CITIES, HOUR, MINUTES, POINT_TYPES, FLATPICKR_CONFIG};
+const UserAction = {
+  UPDATE_POINT:'UPDATE_POINT',
+  ADD_POINT:'ADD_POINT',
+  DELETE_POINT:'DELETE_POINT',
+};
+const UpdateType = {
+  PATCH:'PATCH',
+  MINOR:'MINOR',
+  MAJOR:'MAJOR',
+};
+const FilterType = {
+  EVERYTHING:'everything',
+  FUTURE:'future',
+  PRESENT:'present',
+  PAST:'past',
+};
+export { PRICE, CITIES, HOUR, MINUTES, POINT_TYPES, FLATPICKR_CONFIG,UserAction,UpdateType,FilterType};

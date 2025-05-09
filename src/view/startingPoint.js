@@ -25,16 +25,16 @@ function createWaypointTemplate(point) {
   const isFavoriteEvt = isFavorite ? 'event__favorite-btn--active' : '';
   return ` <li class="trip-events__item">
               <div class="event">
-                <time class="event__date" datetime="2019-03-18">${dateStart.slice(0, 7)}</time>
+                <time class="event__date" datetime="2025-03-18">${dateStart.slice(0, 7)}</time>
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
                 <h3 class="event__title">${type} ${destination.cityName}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
-                    <time class="event__start-time" datetime="2019-03-18T10:30">${dateStart.slice(7, 15)}</time>
+                    <time class="event__start-time" datetime="2025-03-18T10:30">${dateStart.slice(7, 15)}</time>
                     &mdash;
-                    <time class="event__end-time" datetime="2019-03-18T11:00">${dateEnd.slice(7, 15)}</time>
+                    <time class="event__end-time" datetime="2025-03-18T11:00">${dateEnd.slice(7, 15)}</time>
                   </p>
                   <p class="event__duration">${getDateDifference(startDate, endDate)}</p>
                 </div>
@@ -58,7 +58,7 @@ function createWaypointTemplate(point) {
             </li>`;
 }
 
-export default class StartingPoint extends AbstractView {
+export default class StartingPointView extends AbstractView {
   #point = null;
   #handleEditClick = null;
 
@@ -73,6 +73,7 @@ export default class StartingPoint extends AbstractView {
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#buttonClickHandler);
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+
   }
 
   get template() {
@@ -87,6 +88,7 @@ export default class StartingPoint extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleFavouriteToggle();
+
   };
 
 }
