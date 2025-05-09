@@ -36,9 +36,9 @@ export default class TripPlannerPresenter {
     this.#renderTrip();
   }
 
-  // #renderCreationForm() {
-  //   render(this.#creationForm, this.#listComponent.element);
-  // }
+  #renderCreationForm() {
+    render(this.#creationForm, this.#listComponent.element);
+  }
 
   #renderWaypointList() {
     render(this.#listComponent, this.#TripPlannerContainer);
