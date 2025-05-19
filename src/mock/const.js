@@ -71,6 +71,7 @@ const UpdateType = {
   PATCH:'PATCH',
   MINOR:'MINOR',
   MAJOR:'MAJOR',
+  INIT: 'INIT',
 };
 const FilterType = {
   EVERYTHING:'everything',
@@ -78,4 +79,6 @@ const FilterType = {
   PRESENT:'present',
   PAST:'past',
 };
+
+
 export { PRICE, CITIES, HOUR, MINUTES, POINT_TYPES, FLATPICKR_CONFIG,UserAction,UpdateType,FilterType};

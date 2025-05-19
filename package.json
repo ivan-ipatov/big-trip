@@ -27,6 +27,7 @@
     "css-loader": "^7.1.2",
     "dayjs": "^1.11.7",
     "flatpickr": "^4.6.13",
+    "nanoid": "^5.1.5",
     "style-loader": "^4.0.0"
   },
   "browserslist": [
