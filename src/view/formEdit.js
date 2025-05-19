@@ -1,32 +1,38 @@
-import { humanizeEditingFormDate } from '../utils/date.js';
-import { getDestinationById, getOffersByType, getDestinationByCityName, setSaveButtonDisabled } from '../utils/mock.js';
+import {humanizeEditingFormDate} from '../utils/date.js';
+import {setSaveButtonDisabled} from '../utils/mock.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { POINT_TYPES,FLATPICKR_CONFIG } from '../mock/const.js';
+import {FLATPICKR_CONFIG, POINT_TYPES} from '../mock/const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-function createEditingFormTemplate(point) {
-  const { type, price, startDate, endDate } = point;
+function createEditingFormTemplate(point, offersArr, destinations) {
+  const { type, price, startDate, endDate, destinationID, } = point;
 
   const dateStart = humanizeEditingFormDate(startDate);
   const dateEnd = humanizeEditingFormDate(endDate);
-  const destination = getDestinationById(point);
+  const offers = offersArr ? offersArr.find((offer) => offer.type === point.type).offers : {};
 
-  const offers = getOffersByType(point);
+  const destination = destinations.find((dest) => dest.id === destinationID) || {};
+  const destinationName = destination.name || '';
+  const destinationsDescription = destination.description || '';
+  const destinationsListTemplate = destinations
+    .map((dest) => `<option value="${dest.name}"></option>`).join('');
+
 
   const offersTemplate = offers
     .map((offer) => {
       const checked = point.offers.includes(offer.id) ? 'checked' : '';
       return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-comfort" ${checked}>
-        <label class="event__offer-label" for="${offer.id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>`;
+      <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-comfort" ${checked}>
+      <label class="event__offer-label" for="${offer.id}">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>`;
     })
     .join('');
+
   const pointTypeTemplate = POINT_TYPES.map((pointType) => `
    <div class="event__type-item">
                           <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}">
@@ -54,21 +60,11 @@ function createEditingFormTemplate(point) {
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                    ${type}
+                    ${type} ${destinationName}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.cityName}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Los Angeles"></option>
-                      <option value="">New York</option>
-                      <option value="">Chicago</option>
-                      <option value="">Houston</option>
-                      <option value="">Phoenix</option>
-                      <option value="">Philadelphia</option>
-                      <option value="">San Antonio</option>
-                      <option value="">San Diego</option>
-                      <option value="">Dallas</option>
-                      <option value="San Francisco"></option>
-
+                      ${destinationsListTemplate}
                     </datalist>
                   </div>
 
@@ -99,13 +95,13 @@ function createEditingFormTemplate(point) {
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
-                      ${offersTemplate}
+                  ${offersTemplate}
                     </div>
                   </section>
 
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${destination.description}</p>
+                    <p class="event__destination-description">${destinationsDescription}</p>
                   </section>
                 </section>
               </form>
@@ -120,11 +116,13 @@ export default class EditingFormView extends AbstractStatefulView {
   #datepickerEnd = null;
   #handleHideForm = null;
   #handleDeleteClick = null;
-
-  constructor({point, onFormSubmit, onFormHide, onDeleteClick }) {
+  #offers = null;
+  #destinations = null;
+  constructor({ point, offers, destinations, onFormSubmit, onFormHide, onDeleteClick }) {
     super();
     this._setState({ ...point });
-
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleHideForm = onFormHide;
@@ -133,18 +131,30 @@ export default class EditingFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditingFormTemplate(this._state);
+    return createEditingFormTemplate(this._state, this.#offers, this.#destinations);
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
+  parseStateTo(state) {
+    return {...state};
   }
 
   removeElement() {
     super.removeElement();
 
 
-    if(this.#datepickerStart) {
+    if (this.#datepickerStart) {
       this.#datepickerStart.destroy();
       this.#datepickerStart = null;
     }
-    if(this.#datepickerEnd) {
+    if (this.#datepickerEnd) {
       this.#datepickerEnd.destroy();
       this.#datepickerEnd = null;
     }
@@ -174,9 +184,10 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#setDatepickers();
   }
 
-  #formSubmitHandler = (evt) => {
+  #formSubmitHandler = async (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this._state.point);
+    const updatedPoint = this.parseStateTo(this._state);
+    this.#handleFormSubmit(updatedPoint);
   };
 
   #resetButtonClick = (evt) => {
@@ -201,7 +212,7 @@ export default class EditingFormView extends AbstractStatefulView {
     evt.preventDefault();
     const cityName = evt.target.value;
 
-    const destination = getDestinationByCityName(cityName);
+    const destination = this.destinations.find((dest) => dest.name === cityName);
     if (destination) {
       this.updateElement({
         destinationID: destination.id
@@ -240,9 +251,7 @@ export default class EditingFormView extends AbstractStatefulView {
 
   #closeDateEndHandler = ([date]) => {
     this.updateElement({
-
       endDate: date,
-
     });
   };
 
@@ -263,7 +272,7 @@ export default class EditingFormView extends AbstractStatefulView {
     });
   };
 
-  #formDeleteClickHandler = (evt) =>{
+  #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleDeleteClick(this._state);
   };
