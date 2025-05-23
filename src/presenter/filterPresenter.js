@@ -1,15 +1,12 @@
 import { render, replace, remove } from '../framework/render.js';
 import FilterView from '../view/filter.js';
-
-
 import { FilterType, UpdateType } from '../mock/const.js';
-
+import { filter } from '../utils/filter.js';
 
 export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #pointsModel = null;
-
   #filterComponent = null;
 
   constructor({ filterContainer, filterModel, pointsModel }) {
@@ -22,10 +19,10 @@ export default class FilterPresenter {
   }
 
   get filters() {
-
-
+    const points = this.#pointsModel.points;
     return Object.values(FilterType).map((type) => ({
-      type
+      type,
+      count: filter[type](points).length
     }));
   }
 

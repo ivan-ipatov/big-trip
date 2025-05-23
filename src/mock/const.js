@@ -80,5 +80,12 @@ const FilterType = {
   PAST:'past',
 };
 
+export const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer'
+};
 
 export { PRICE, CITIES, HOUR, MINUTES, POINT_TYPES, FLATPICKR_CONFIG,UserAction,UpdateType,FilterType};
