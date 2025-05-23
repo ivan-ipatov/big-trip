@@ -130,14 +130,13 @@ export default class TripPlannerPresenter {
   #handleViewAction = async (actionType, updatedType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-
         await this.#pointsModel.updatePoint(updatedType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updatedType, update);
+        await this.#pointsModel.deletePoint(updatedType, update);
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updatedType, update);
+        await this.#pointsModel.addPoint(updatedType, update);
         break;
     }
   };
