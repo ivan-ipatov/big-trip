@@ -144,10 +144,9 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleDeleteClick = (point) => {
-    this.#handleDataChange(UserAction.DELETE_POINT,
-      UpdateType.MINOR,
-      point,);
+  #handleDeleteClick = async (point) => {
+    await this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.destroy();
   };
 
 
