@@ -42,8 +42,5 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
     ]
-  },
-  experiments: {
-    topLevelAwait: true
   }
 };
